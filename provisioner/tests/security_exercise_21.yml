@@ -19,13 +19,13 @@
           register: grep_result
           failed_when: grep_result.rc == 0
 
-        - name: copy whitelist_attacker.yml to control nodes
+        - name: copy allowlist_attacker.yml to control nodes
           copy:
-            src: ../../exercises/ansible_security/1.2-checkpoint/playbooks/whitelist_attacker.yml
-            dest: whitelist_attacker.yml
+            src: ../../exercises/ansible_security/1.2-checkpoint/playbooks/allowlist_attacker.yml
+            dest: allowlist_attacker.yml
 
-        - name: execute whitelist_attacker.yml on control nodes
-          command: /usr/bin/ansible-playbook whitelist_attacker.yml
+        - name: execute allowlist_attacker.yml on control nodes
+          command: /usr/bin/ansible-playbook allowlist_attacker.yml
 
         - name: install required collections
           command: "ansible-galaxy collection install {{ item }}"
@@ -44,7 +44,7 @@
             minutes: 1
 
         - name: Verify policy installation
-          command: /usr/bin/ansible-playbook --start-at-task="Install policy" whitelist_attacker.yml
+          command: /usr/bin/ansible-playbook --start-at-task="Install policy" allowlist_attacker.yml
 
         - name: Verify attack string in log file
           command: "ssh ec2-user@{{ hostvars['snort']['ansible_host'] }} sudo grep web_attack /var/log/httpd/access_log"
