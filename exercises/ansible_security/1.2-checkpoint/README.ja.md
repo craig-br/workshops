@@ -94,7 +94,7 @@ Ansible にあまり慣れていない方は、以下の Playbook の例をご�
 
 ここでは、Check Point の設定を変更するための Playbook を書いてみましょう。まず、ファイアウォールの設定に whiltelist エントリを追加して、特定のマシンから別のマシンへのトラフィックを許可する簡単な例から始めます。この例では、**attacker** というマシンから **snort** というマシンにトラフィックを送信できるようにします。
 
-Playbook は Ansible コントロールホスト上で書かれ、実行されます。Playbook の言語は [YAML](https://en.wikipedia.org/wiki/YAML) です。ブラウザでVS Codeのオンラインエディタにアクセスします。メニューバーの **File** -> **New File** をクリックします。新しい空のファイルが開きます。続ける前に、保存しておきましょう。メニューバーの **File** -> **Save As...** をクリックします。ドロップダウンメニューが開き、**lab_inventory** ディレクトリの **Untitled-1** というファイル名が表示されます。このファイル名を`whitelist_attacker.yml`に変更し、**lab_inventory** ディレクトリを削除して、絶対パスでのファイル名が `/home/student<X>/whitelist_attacker.yml` となるようにしてください。`<X>` には割り当てられた生徒IDが入ります。
+Playbook は Ansible コントロールホスト上で書かれ、実行されます。Playbook の言語は [YAML](https://en.wikipedia.org/wiki/YAML) です。ブラウザでVS Codeのオンラインエディタにアクセスします。メニューバーの **File** -> **New File** をクリックします。新しい空のファイルが開きます。続ける前に、保存しておきましょう。メニューバーの **File** -> **Save As...** をクリックします。ドロップダウンメニューが開き、**lab_inventory** ディレクトリの **Untitled-1** というファイル名が表示されます。このファイル名を`allowlist_attacker.yml`に変更し、**lab_inventory** ディレクトリを削除して、絶対パスでのファイル名が `/home/student<X>/allowlist_attacker.yml` となるようにしてください。`<X>` には割り当てられた生徒IDが入ります。
 
 > **Note**
 > 
@@ -104,7 +104,7 @@ Playbook は Ansible コントロールホスト上で書かれ、実行され�
 
 ```yaml
 ---
-- name: Whitelist Attacker
+- name: Allowlist Attacker
   hosts: checkpoint
 ```
 
@@ -121,7 +121,7 @@ Playbook は Ansible コントロールホスト上で書かれ、実行され�
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist Attacker
+- name: Allowlist Attacker
   hosts: checkpoint
 
   vars:
@@ -147,7 +147,7 @@ Playbook は Ansible コントロールホスト上で書かれ、実行され�
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: Allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -177,7 +177,7 @@ Playbook は Ansible コントロールホスト上で書かれ、実行され�
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: Allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -202,7 +202,7 @@ Playbook は Ansible コントロールホスト上で書かれ、実行され�
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: Allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -244,7 +244,7 @@ Playbook は Ansible コントロールホスト上で書かれ、実行され�
 Playbook はコントロールノードの `ansible-navigator` コマンドを使って実行します。新しい Playbook を実行する前に、構文エラーをチェックすることをおすすめします。VSCode オンラインエディタで、メニューバーの **Terminal** -> **New Terminal** をクリックします。ターミナルで、以下のコマンドを実行します:
 
 ```bash
-[student<X>@ansible ansible-files]$ ansible-navigator run --syntax-check --mode stdout whitelist_attacker.yml
+[student<X>@ansible ansible-files]$ ansible-navigator run --syntax-check --mode stdout allowlist_attacker.yml
 ```
 
 構文チェックではエラーが報告されないはずです。エラーが報告された場合は、出力をチェックし、Playbookを見直して問題を修正してみてください。
@@ -252,9 +252,9 @@ Playbook はコントロールノードの `ansible-navigator` コマンドを�
 これで Playbook を実行する準備が整いました:
 
 ```bash
-[student<X>@ansible ansible-files]$ ansible-navigator run whitelist_attacker.yml
+[student<X>@ansible ansible-files]$ ansible-navigator run allowlist_attacker.yml
 
-PLAY [Whitelist attacker] *********************************************************
+PLAY [Allowlist attacker] *********************************************************
 
 TASK [Gathering Facts] ************************************************************
 ok: [checkpoint]

@@ -11,7 +11,7 @@ Dans cet exercice, nous imaginons que nous sommes un opérateur de sécurité en
 
 ## Étape 2.2 - Préparatifs
 
-Pour que cet exercice fonctionne correctement, le playbook `whitelist_attacker.yml` doit avoir été exécuté au moins une fois. Toujours dans l'interface de gestion de Check Point SmartConsole, la journalisation de la stratégie de liste d'autorisation de l'attaquant doit avoir été activée. Les deux ont été effectués dans l'exercice Check Point de la section 1. Si vous avez manqué les étapes, retournez-y, exécutez le playbook, suivez les étapes pour activer la journalisation et revenez ici.
+Pour que cet exercice fonctionne correctement, le playbook `allowlist_attacker.yml` doit avoir été exécuté au moins une fois. Toujours dans l'interface de gestion de Check Point SmartConsole, la journalisation de la stratégie de liste d'autorisation de l'attaquant doit avoir été activée. Les deux ont été effectués dans l'exercice Check Point de la section 1. Si vous avez manqué les étapes, retournez-y, exécutez le playbook, suivez les étapes pour activer la journalisation et revenez ici.
 
 ## Étape 2.3 - Explorez la configuration d'automation controller
 
@@ -27,9 +27,9 @@ Ouvrez votre navigateur et entrez le lien vers votre instance controller. Connec
 
 ![Controller dashboard](images/controller_dashboard.png)
 
-Sur le côté gauche, cliquez sur **Templates**. Une liste de tous les modèles de tâche déjà configurés s'affiche. Un modèle de tâche est une définition et un ensemble de paramètres permettant d'exécuter une tâche Ansible. Il définit l'inventaire, les informations d'identification, le playbook, les limites, les droits d'eélévation de prévilège, etc. qui sont nécessaires pour exécuter l'automatisation. Dans cette liste, recherchez l'entrée appelée **Blacklist attacker**, et cliquez sur le symbole de la fusée à droite:
+Sur le côté gauche, cliquez sur **Templates**. Une liste de tous les modèles de tâche déjà configurés s'affiche. Un modèle de tâche est une définition et un ensemble de paramètres permettant d'exécuter une tâche Ansible. Il définit l'inventaire, les informations d'identification, le playbook, les limites, les droits d'eélévation de prévilège, etc. qui sont nécessaires pour exécuter l'automatisation. Dans cette liste, recherchez l'entrée appelée **Denylist attacker**, et cliquez sur le symbole de la fusée à droite:
 
-![Blacklist attacker](images/controller_blacklist.png)
+![Denylist attacker](images/controller_denylist.png)
 
 Ce clic vous amènera à l'aperçu du travail, montrant l'avancement en direct de l'exécution de la tâche d'automatisation et un résumé de tous les paramètres qui sont pertinents. Avec cette exécution d'automatisation, nous avons modifié la stratégie existante dans le pare-feu pour supprimer les paquets transitant entre les deux machines.
 
@@ -62,9 +62,9 @@ Mais, comme indiqué dans le dernier exercice, nous pouvons automatiser ce proce
 
 Essayons cela. Déconnectez-vous de votre instance controller et reconnectez-vous en tant qu'utilisateur du pare-feu: `opsfirewall`. Pour la simplicité de la démo, le mot de passe est le même que pour votre utilisateur étudiant. Une fois que vous êtes connecté et que vous pouvez voir le tableau de bord, accédez à **Templates**. Comme vous le voyez, en tant qu'administrateur de pare-feu, nous ne pouvons voir et exécuter que quelques modèles de travail:
 
-- **Blacklist attacker**
+- **Denylist attacker**
 - **Send firewall logs to QRadar**
-- **Whitelist attacker**
+- **Allowlist attacker**
 
 Étant donné que nous sommes les propriétaires de domaine du pare-feu, nous pouvons modifier, supprimer et exécuter ces modèles de travail. Exécutons le modèle **Send firewall logs to QRadar** en cliquant sur le petit icône de fusée à droite. L'exécution de la tâche prend quelques secondes. Du point de vue de l'opérateur du pare-feu, nous avons maintenant reconfiguré le pare-feu pour envoyer des journaux au SIEM central.
 
@@ -162,7 +162,7 @@ Jetons un coup d'œil à notre SIEM QRadar: accédez à l'onglet d'activité du 
 
 Nous avons déterminé que l'hôte n'effectue pas d'attaque et avons finalement confirmé que la violation de la politique de pare-feu est un faux positif, probablement dû à une mauvaise configuration du groupe de liste d'autorisation pour cette application. Nous pouvons donc ajouter à la liste d'autorisation l'IP dans le pare-feu pour laisser passer les événements.
 
-Déconnectez-vous de controller et reconnectez-vous en tant qu'utilisateur `opsfirewall`. Accédez à la vue d'ensemble **Modèles** et lancez le modèle de tâche **Whitelist attacker**. Quelques instants plus tard, le trafic est autorisé.
+Déconnectez-vous de controller et reconnectez-vous en tant qu'utilisateur `opsfirewall`. Accédez à la vue d'ensemble **Modèles** et lancez le modèle de tâche **Allowlist attacker**. Quelques instants plus tard, le trafic est autorisé.
 
 ## Étape 2.10 - Restauration
 

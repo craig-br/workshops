@@ -93,7 +93,7 @@ Si vous n'êtes pas très familier avec Ansible, consultez l'exemple suivant d'u
 
 Nous allons maintenant écrire un playbook pour changer la configuration de la configuration de Check Point. Nous commencerons par un exemple simple où nous ajouterons une entrée whiltelist dans la configuration du pare-feu pour autoriser le trafic d'une certaine machine à une autre. Dans notre exemple, nous autoriserons la machine appelée **attaquant** à envoyer du trafic vers notre machine **snort**.
 
-Le playbook sera écrit et exécuté sur l'hôte de contrôle Ansible. La langue dans laquelle le playbook est écrit est [YAML] (https://en.wikipedia.org/wiki/YAML). Dans votre navigateur, accédez à l'éditeur en ligne VS Code. Dans la barre de menu, cliquez sur **Fichier** -> **Nouveau fichier**. Un nouveau fichier vide s'ouvre. Avant de continuer, enregistrons-le. Encore une fois dans la barre de menu, cliquez sur **Fichier** -> **Enregistrer sous ...**. Le menu déroulant s'ouvre, suggérant le nom de fichier **Untitled-1** dans le répertoire **lab_inventory**. Remplacez-le par «whitelist_attacker.yml» et supprimez le répertoire **lab_inventory** pour que le nom de fichier complet soit: «/home/student<X>/whitelist_attacker.yml» où «<X>» est l'ID étudiant qui vous est attribué .
+Le playbook sera écrit et exécuté sur l'hôte de contrôle Ansible. La langue dans laquelle le playbook est écrit est [YAML] (https://en.wikipedia.org/wiki/YAML). Dans votre navigateur, accédez à l'éditeur en ligne VS Code. Dans la barre de menu, cliquez sur **Fichier** -> **Nouveau fichier**. Un nouveau fichier vide s'ouvre. Avant de continuer, enregistrons-le. Encore une fois dans la barre de menu, cliquez sur **Fichier** -> **Enregistrer sous ...**. Le menu déroulant s'ouvre, suggérant le nom de fichier **Untitled-1** dans le répertoire **lab_inventory**. Remplacez-le par «allowlist_attacker.yml» et supprimez le répertoire **lab_inventory** pour que le nom de fichier complet soit: «/home/student<X>/allowlist_attacker.yml» où «<X>» est l'ID étudiant qui vous est attribué .
 
 > **Remarque**
 >
@@ -103,7 +103,7 @@ Une fois que nous avons enregistré le fichier au bon endroit, nous pouvons ajou
 
 ```yaml
 ---
-- name: Whitelist Attacker
+- name: Allowlist Attacker
   hosts: checkpoint
 ```
 
@@ -121,7 +121,7 @@ Pour cela, nous ajoutons les IP source et de destination en tant que variables a
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist Attacker
+- name: Allowlist Attacker
   hosts: checkpoint
 
   vars:
@@ -147,7 +147,7 @@ Commençons par une tâche pour définir l'objet source:
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: Allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -177,7 +177,7 @@ De la même manière que nous avons défini l'IP source, nous allons maintenant 
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: Allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -202,7 +202,7 @@ Enfin, nous définissons la règle d'accès entre ces deux serveurs. Les règles
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: Allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -244,7 +244,7 @@ Enfin, nous définissons la règle d'accès entre ces deux serveurs. Les règles
 Les playbooks sont exécutés à l'aide de la commande `ansible-navigator` sur le nœud de contrôle. Avant d'exécuter un nouveau playbook, il est judicieux de vérifier les erreurs de syntaxe. Dans votre éditeur en ligne VS Code, dans la barre de menu, cliquez sur **Terminal** -> **Nouveau terminal**. Dans le terminal, exécutez la commande suivante:
 
 ```bash
-[student<X>@ansible ansible-files]$ ansible-navigator run --syntax-check --mode stdout whitelist_attacker.yml
+[student<X>@ansible ansible-files]$ ansible-navigator run --syntax-check --mode stdout allowlist_attacker.yml
 ```
 
 La vérification de la syntaxe ne doit signaler aucune erreur. S'il signale une erreur, vérifiez la sortie et essayez de résoudre le problème dans le code du playbook.
@@ -252,9 +252,9 @@ La vérification de la syntaxe ne doit signaler aucune erreur. S'il signale une 
 Vous devriez maintenant être prêt à exécuter votre playbook:
 
 ```bash
-[student<X>@ansible ansible-files]$ ansible-navigator run whitelist_attacker.yml
+[student<X>@ansible ansible-files]$ ansible-navigator run allowlist_attacker.yml
 
-PLAY [Whitelist attacker] *********************************************************
+PLAY [Allowlist attacker] *********************************************************
 
 TASK [Gathering Facts] ************************************************************
 ok: [checkpoint]

@@ -98,8 +98,8 @@ We will use Ansible Automation Platform to elevate the interactions learned in t
 
 For this exercise to work properly, we'll need to make sure a few steps in the previous [Check Point exercises](../1.2-checkpoint/README.md) have been completed:
 
-1. The `whitelist_attacker.yml` playbook must have been run at least once. 
-2. Also, the logging for the attacker whitelist policy must have been activated in the Check Point SmartConsole.
+1. The `allowlist_attacker.yml` playbook must have been run at least once. 
+2. Also, the logging for the attacker allowlist policy must have been activated in the Check Point SmartConsole.
 
 Both were done in the [Check Point exercises](../1.2-checkpoint/README.md). If you missed the steps, go back there, execute the playbook, follow the steps to activate the logging and come back here.
 

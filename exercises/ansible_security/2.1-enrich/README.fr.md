@@ -11,7 +11,7 @@ Nous utiliserons Ansible pour créer des interactions entre les composants appri
 
 ## Étape 1.2 - Préparatifs
 
-Pour que cet exercice fonctionne correctement, le playbook `whitelist_attacker.yml` doit avoir été exécuté au moins une fois. La journalisation de la stratégie de liste d'autorisation de l'attaquant doit également avoir été activée. Les deux ont été effectués lors de l'exercice Check Point. Si vous avez manqué les étapes, retournez-y, exécutez le playbook, suivez les étapes pour activer la journalisation et revenez ici.
+Pour que cet exercice fonctionne correctement, le playbook `allowlist_attacker.yml` doit avoir été exécuté au moins une fois. La journalisation de la stratégie de liste d'autorisation de l'attaquant doit également avoir été activée. Les deux ont été effectués lors de l'exercice Check Point. Si vous avez manqué les étapes, retournez-y, exécutez le playbook, suivez les étapes pour activer la journalisation et revenez ici.
 
 Nous avons également besoin de la collection QRadar. Qui a déjà été installé dans le précédent exercice QRadar. Si vous avez manqué cette partie, installez-les via: `ansible-galaxy collection install ibm.qradar`
 

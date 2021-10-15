@@ -171,7 +171,7 @@ If you are not very familiar with Ansible, see the following example of a playbo
 
 We will now write a playbook to change the configuration of the Check Point setup. We will start with a simple example where we will add a whiltelist entry in the firewall configuration to allow traffic from a certain machine to another. In our example we will allow the machine called **attacker** to send traffic to our machine **snort**.
 
-The playbook will be written and run on the Ansible control host. The language the playbook is written in is [YAML](https://en.wikipedia.org/wiki/YAML). In your browser, access the VS Code online editor. In the menu bar, click on **File** -> **New File**. A new, empty file opens. Before we continue, let's save it. Again in the menu bar, click on **File** -> **Save As...**. The drop down menu opens suggesting the filename **Untitled-1** in the directory **lab_inventory**. Change this to `whitelist_attacker.yml` and remove the directory **lab_inventory** so that the full filename is: `/home/student<X>/whitelist_attacker.yml` where `<X>` is the student id assigned to you.
+The playbook will be written and run on the Ansible control host. The language the playbook is written in is [YAML](https://en.wikipedia.org/wiki/YAML). In your browser, access the VS Code online editor. In the menu bar, click on **File** -> **New File**. A new, empty file opens. Before we continue, let's save it. Again in the menu bar, click on **File** -> **Save As...**. The drop down menu opens suggesting the filename **Untitled-1** in the directory **lab_inventory**. Change this to `allowlist_attacker.yml` and remove the directory **lab_inventory** so that the full filename is: `/home/student<X>/allowlist_attacker.yml` where `<X>` is the student id assigned to you.
 
 > **Note**
 >
@@ -181,7 +181,7 @@ once we have saved the file in the proper place, we can add our playbook code. F
 
 ```yaml
 ---
-- name: Whitelist Attacker
+- name: allowlist Attacker
   hosts: checkpoint
 ```
 
@@ -191,14 +191,14 @@ In case you wonder: the three dashes at the top, `---`, indicate the start of a 
 >
 > It is a good practice to make playbooks more reusable by pointing them at `hosts: all` and limit the execution later on the command line or via automation controller. But for now we simplify the process by naming hosts in the playbook directly.
 
-As mentioned, in this a simple example we will add a whitelist entry. A simple whitelist entry consists of a source IP address, a destination IP address and the rule to allow access between those.
+As mentioned, in this a simple example we will add an allowlist entry. A simple allowlist entry consists of a source IP address, a destination IP address and the rule to allow access between those.
 
 For this, we add the source and destination IPs as variables to the playbook. Since Ansible knows all the machines from the inventory and since the IPs are listed in the inventory, we can just reference those information as [variables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html) of the corresponding hosts:
 
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist Attacker
+- name: allowlist Attacker
   hosts: checkpoint
 
   vars:
@@ -224,7 +224,7 @@ Let's start with a task to define the source object:
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -254,7 +254,7 @@ In the same way we defined the source IP host object, we will now add the destin
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -279,7 +279,7 @@ Last, we are defining the actual access rule between those two host objects. The
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Whitelist attacker
+- name: allowlist attacker
   hosts: checkpoint
 
   vars:
@@ -321,7 +321,7 @@ Last, we are defining the actual access rule between those two host objects. The
 Playbooks are executed using the `ansible-navigator` command on the control node. Before you run a new playbook it’s a good idea to check for syntax errors. In your VS Code online editor, in the menu bar click on **Terminal** -> **New Terminal**. In the terminal, execute the following command:
 
 ```bash
-[student<X>@ansible-1 ~]$ ansible-navigator run whitelist_attacker.yml --syntax-check --mode stdout
+[student<X>@ansible-1 ~]$ ansible-navigator run allowlist_attacker.yml --syntax-check --mode stdout
 ```
 
 The syntax check should report no errors. If it does report an error, check the output and try to fix the problem in the playbook code.
@@ -329,9 +329,9 @@ The syntax check should report no errors. If it does report an error, check the 
 Now you should be ready to run your playbook:
 
 ```bash
-[student<X>@ansible-1 ~]$ ansible-navigator run whitelist_attacker.yml --mode stdout
+[student<X>@ansible-1 ~]$ ansible-navigator run allowlist_attacker.yml --mode stdout
 
-PLAY [Whitelist attacker] *********************************************************
+PLAY [allowlist attacker] *********************************************************
 
 TASK [Gathering Facts] ************************************************************
 ok: [checkpoint]

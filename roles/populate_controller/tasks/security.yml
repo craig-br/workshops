@@ -300,13 +300,13 @@
     use_fact_cache: true
     validate_certs: false
 
-- name: Job template adding whitelist entry for attacker
+- name: Job template adding allowlist entry for attacker
   awx.awx.job_template:
-    name: "Whitelist attacker"
+    name: "Allowlist attacker"
     job_type: "run"
     inventory: "Workshop Inventory"
     project: "Workshop Project"
-    playbook: "whitelist_attacker.yml"
+    playbook: "allowlist_attacker.yml"
     state: "present"
     limit: "checkpoint"
     execution_environment: "{{ workshop_type }} workshop execution environment"
@@ -316,13 +316,13 @@
     use_fact_cache: true
     validate_certs: false
 
-- name: Job template adding blacklist entry for attacker
+- name: Job template adding denylist entry for attacker
   awx.awx.job_template:
-    name: "Blacklist attacker"
+    name: "Denylist attacker"
     job_type: "run"
     inventory: "Workshop Inventory"
     project: "Workshop Project"
-    playbook: "blacklist_attacker.yml"
+    playbook: "denylist_attacker.yml"
     state: "present"
     limit: "checkpoint"
     execution_environment: "{{ workshop_type }} workshop execution environment"
@@ -345,8 +345,8 @@
     validate_certs: false
   loop:
     - "Send firewall logs to QRadar"
-    - "Whitelist attacker"
-    - "Blacklist attacker"
+    - "Allowlist attacker"
+    - "Denylist attacker"
 
 - name: Ensure that opsfirewall has admin rights for own jobs
   awx.awx.role:

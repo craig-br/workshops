@@ -88,8 +88,8 @@ In this exercise, we imagine that we are a security operator in charge of an ent
 
 As in the previous exercise, we need to make sure a few steps in the previous [Check Point exercises](../1.2-checkpoint/README.md) have been completed:
 
-1. The `whitelist_attacker.yml` playbook must have been run at least once. 
-2. Also, the logging for the attacker whitelist policy must have been activated in the Check Point SmartConsole.
+1. The `allowlist_attacker.yml` playbook must have been run at least once. 
+2. Also, the logging for the attacker allowlist policy must have been activated in the Check Point SmartConsole.
 
 Both were done in the [Check Point exercises](../1.2-checkpoint/README.md). If you missed the steps, go back there, execute the playbook, follow the steps to activate the logging and come back here.
 
@@ -109,9 +109,9 @@ Open your browser and enter the link to your automation controller instance. Log
 
 ![Automation controller dashboard](images/controller_dashboard.png#centreme)
 
-On the left side, click on **Templates**. A list of all already configured job templates are shown. A job template is a definition and set of parameters for running an Ansible job. It defines the inventory, credentials, playbook, limits, become rights and so on which are needed to execute the automation. In this list, find the entry called **Blacklist attacker**, and click on the rocket symbol right to it:
+On the left side, click on **Templates**. A list of all already configured job templates are shown. A job template is a definition and set of parameters for running an Ansible job. It defines the inventory, credentials, playbook, limits, become rights and so on which are needed to execute the automation. In this list, find the entry called **Denylist attacker**, and click on the rocket symbol right to it:
 
-![Blacklist attacker](images/controller_blacklist.png#centreme)
+![Denylist attacker](images/controller_denylist.png#centreme)
 
 This click will bring you to the job overview, showing live data from the automation job execution and a summary of all the parameters which are relevant to the job. With this automation execution we have changed the existing policy in the Firewall to drop packages between the two machines.
 
@@ -149,9 +149,9 @@ But, as shown with the last exercise, we can automate this process with Ansible 
 
 Let's try this out. Log out of your controller instance, and log in as the firewall user: `opsfirewall`. For the simplicity of the demo, the password is the same as for your student user. Once you have logged in and can see the dashboard, navigate to **Templates**. As you see, as the firewall administrator we can only see and execute few job templates:
 
-- **Blacklist attacker**
+- **Denylist attacker**
 - **Send firewall logs to QRadar**
-- **Whitelist attacker**
+- **Allowlist attacker**
 
 Since we are the domain owners of the firewall, we can modify, delete and execute those job templates. Let's execute the template **Send firewall logs to QRadar** by clicking on the little rocket icon next to it. The execution of the job takes a few seconds. From the perspective of the firewall operator we have now reconfigured the firewall to send logs to the central SIEM.
 
@@ -249,7 +249,7 @@ Only the two **Accept...** job templates belong the analyst, and can be modified
 
 Execute now both job templates **Accept IDPS logs in QRadar** and **Send IDPS logs to QRadar** by pressing the little rocket icon next to the job templates.
 
-## Step 2.9 - Whitelist IP
+## Step 2.9 - Allowlist IP
 
 Let's quickly have a look at our SIEM QRadar: access the log activity tab. Validate, that in QRadar **no** events from the IDS are generated. That way you know for sure that the anomaly you see is only caused by the single IP you have in the firewall. No other traffic is causing the anomaly, you can safely assume that the anomaly you see is a false positive.
 
@@ -257,9 +257,9 @@ Let's quickly have a look at our SIEM QRadar: access the log activity tab. Valid
 >
 > In reality you might perform additional steps analyzing the machines behavior to exclude the possibility that it has been compromised.
 
-We have determined that the host is not performing an attack and finally confirmed that the firewall policy violation is a false positive, probably caused by a misconfiguration of the whitelist group for that application. So we can whitelist the IP in the firewall to let events come through.
+We have determined that the host is not performing an attack and finally confirmed that the firewall policy violation is a false positive, probably caused by a misconfiguration of the allowlist group for that application. So we can allowlist the IP in the firewall to let events come through.
 
-Log out of controller and log back in as user `opsfirewall`. Go to the **Templates** overview, and launch the job template **Whitelist attacker**. A few moments later the traffic is allowed.
+Log out of controller and log back in as user `opsfirewall`. Go to the **Templates** overview, and launch the job template **Allowlist attacker**. A few moments later the traffic is allowed.
 
 Let's verify that QRadar properly shows the Snort log events. In the QRadar UI, click on the **Log Activity** menu at the top. You should see log entries from the **Snort rsyslog source** similar to the below.
 

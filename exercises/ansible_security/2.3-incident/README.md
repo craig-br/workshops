@@ -146,8 +146,8 @@ Run it with:
 
 For this exercise to work properly, we'll need to make sure a few steps in the previous [Check Point exercises](../1.2-checkpoint/README.md) have been completed:
 
-1. The `whitelist_attacker.yml` playbook must have been run at least once. 
-2. Also, the logging for the attacker whitelist policy must have been activated in the Check Point SmartConsole.
+1. The `allowlist_attacker.yml` playbook must have been run at least once. 
+2. Also, the logging for the attacker allowlist policy must have been activated in the Check Point SmartConsole.
 
 Both were done in the [Check Point exercises](../1.2-checkpoint/README.md). If you missed the steps, go back there, execute the playbook, follow the steps to activate the logging and come back here.
 
@@ -273,18 +273,18 @@ Double-click on the new offense and in the top right hand corner, click on the *
 
 ![QRadar Offense Annotation](images/qradar_annotation_sql_injection.png)
 
-## Step 3.6 - Blacklist IP
+## Step 3.6 - Denylist IP
 
-With all these information at hand, we can now create our incident response. We've realized that these attacks originate from a specific IP which we previously identified in the Snort logs in the QRadar Log Activity window. So let's stop it! We will blacklist the source IP of the attacker.
+With all these information at hand, we can now create our incident response. We've realized that these attacks originate from a specific IP which we previously identified in the Snort logs in the QRadar Log Activity window. So let's stop it! We will denylist the source IP of the attacker.
 
 In a typical environment, performing this remediation would require yet another interaction with the security operators in charge of the firewalls. But we can launch an Ansible playbook to achieve the same goal in seconds rather than hours or days.
 
-In your VS Code online editor, create a file called `incident_blacklist.yml`. Note that we do not enter the IP address here but again a variable, since Ansible already has the information from the inventory.
+In your VS Code online editor, create a file called `incident_denylist.yml`. Note that we do not enter the IP address here but again a variable, since Ansible already has the information from the inventory.
 
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Blacklist attacker
+- name: Denylist attacker
   hosts: checkpoint
 
   vars:
@@ -321,17 +321,17 @@ In your VS Code online editor, create a file called `incident_blacklist.yml`. No
 ```
 <!-- {% endraw %} -->
 
-Run the playbook, to effectively blacklist the IP:
+Run the playbook, to effectively denylist the IP:
 
 ```bash
-[student<X>@ansible-1 ~]$ ansible-navigator run incident_blacklist.yml --mode stdout
+[student<X>@ansible-1 ~]$ ansible-navigator run incident_denylist.yml --mode stdout
 ```
 
 In your QRadar UI, verify in the Log Activity tab that you do not receive any more alerts from Snort. Note that, if you would have connected the firewall to QRadar, there would actually be logs coming in from there.
 
 Also, let's quickly verify that the new rule was added to Check Point: Access the Windows workstation and open the SmartConsole interface. On the left side, click on **SECURITY POLICIES** and note that the access control policy entry changed from **Accept** to **Drop**.
 
-![SmartConsole Blacklist Policy](images/check_point_policy_drop.png#centreme)
+![SmartConsole Denylist Policy](images/check_point_policy_drop.png#centreme)
 
 You have successfully identified an attack and blocked the traffic behind the attack!
 

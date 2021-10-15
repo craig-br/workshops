@@ -73,7 +73,7 @@ Exécutez-le avec:
 
 Nous avons également besoin de la collection QRadar. Cela a déjà été installé dans le précédent exercice QRadar. Si vous avez manqué cette partie, installez-les via: `ansible-galaxy collection install ibm.qradar`
 
-De plus, pour laisser passer le trafic entre les deux machines, deux choses du premier exercice Check Point doivent être accomplies: d'abord le playbook `whitelist_attacker.yml` doit avoir été exécuté. Et la journalisation de l'autorisation de l'attaquant doit avoir été activée. Si vous avez manqué ces étapes, revenez au premier exercice Check Point, créez et exécutez le playbook, suivez les étapes pour activer la journalisation et revenez ici.
+De plus, pour laisser passer le trafic entre les deux machines, deux choses du premier exercice Check Point doivent être accomplies: d'abord le playbook `allowlist_attacker.yml` doit avoir été exécuté. Et la journalisation de l'autorisation de l'attaquant doit avoir été activée. Si vous avez manqué ces étapes, revenez au premier exercice Check Point, créez et exécutez le playbook, suivez les étapes pour activer la journalisation et revenez ici.
 
 L'environnemnet est prête. Lisez la suite pour savoir de quoi parle ce cas d'utilisation.
 
@@ -178,12 +178,12 @@ Avec toutes ces informations à portée de main, nous identifions positivement c
 
 Dans un environnement typique, la réalisation de cette correction nécessiterait une nouvelle interaction avec les opérateurs de sécurité en charge des pare-feu. Mais nous pouvons lancer un playbook Ansible pour atteindre le même objectif en quelques secondes plutôt qu'en heures ou en jours.
 
-Dans votre éditeur en ligne VS Code, créez un fichier appelé `incident_blacklist.yml`. Notez que nous n'entrons pas l'adresse IP ici mais encore une variable, car Ansible a déjà les informations de l'inventaire.
+Dans votre éditeur en ligne VS Code, créez un fichier appelé `incident_denylist.yml`. Notez que nous n'entrons pas l'adresse IP ici mais encore une variable, car Ansible a déjà les informations de l'inventaire.
 
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Blacklist attacker
+- name: Denylist attacker
   hosts: checkpoint
 
   vars:
@@ -223,14 +223,14 @@ Dans votre éditeur en ligne VS Code, créez un fichier appelé `incident_blackl
 Exécutez le playbook:
 
 ```bash
-[student<X>@ansible ~]$ ansible-navigator run incident_blacklist.yml
+[student<X>@ansible ~]$ ansible-navigator run incident_denylist.yml
 ```
 
 Dans votre interface utilisateur QRadar, vérifiez dans l'onglet `Log Activity` que vous ne recevez plus d'alertes de Snort. Notez que, si vous aviez connecté le pare-feu à QRadar, il y aurait en fait des journaux provenant de là.
 
 De plus, vérifions rapidement que la nouvelle règle a été ajoutée à Check Point: accédez au poste de travail Windows et ouvrez l'interface SmartConsole. Sur le côté gauche, cliquez sur **SECURITY POLICIES** et notez que l'entrée de politique de contrôle d'accès est passée de **Accept** à **Drop**.
 
-![SmartConsole Blacklist Policy](images/check_point_policy_drop.png)
+![SmartConsole Denylist Policy](images/check_point_policy_drop.png)
 
 Vous avez réussi à identifier une attaque et à bloquer le trafic derrière l'attaque!
 

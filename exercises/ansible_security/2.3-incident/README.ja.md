@@ -57,7 +57,7 @@ Playbook を実行します:
 
 また、QRadar コレクションも必要です。これは前回の QRadar 演習で既にインストールされています。その部分を見逃した場合は、次の方法でインストールしてください。`ansible-galaxy collection install ibm.qradar`
 
-また、両方のマシン間のトラフィックを通過させるには、最初の Check Point の演習で2つのことを完了させておく必要があります: 最初に、Playbook `whitelist_attacker.yml` を実行する必要があります。次に、攻撃者のホワイトリストポリシーのロギングが有効になっている必要があります。これらの手順をやり逃した場合は、最初の Check Point 演習に戻り、Playbook を作成して実行し、手順に従ってロギングを有効にしてから、ここに戻ってください。
+また、両方のマシン間のトラフィックを通過させるには、最初の Check Point の演習で2つのことを完了させておく必要があります: 最初に、Playbook `allowlist_attacker.yml` を実行する必要があります。次に、攻撃者のホワイトリストポリシーのロギングが有効になっている必要があります。これらの手順をやり逃した場合は、最初の Check Point 演習に戻り、Playbook を作成して実行し、手順に従ってロギングを有効にしてから、ここに戻ってください。
 
 これで舞台は整いました。このユースケースが何であるかを学ぶためにお読みください。
 
@@ -162,12 +162,12 @@ QRadar ログビューにフィルターを追加すると、より良い概要�
 
 一般的な環境では、この改善策を実行するには、ファイアウォールを担当するセキュリティオペレータとのやりとりが必要になります。しかし、数時間や数日ではなく、数秒で同じ目標を達成するためには Ansible の Playbook を起動することで実現できます。
 
-VS Code オンラインエディタで `incident_blacklist.yml` というファイルを作成します。Ansible はすでにインベントリからの情報があるため、ここでは IP アドレスではなく変数を入力することに注意してください。
+VS Code オンラインエディタで `incident_denylist.yml` というファイルを作成します。Ansible はすでにインベントリからの情報があるため、ここでは IP アドレスではなく変数を入力することに注意してください。
 
 <!-- {% raw %} -->
 ```yaml
 ---
-- name: Blacklist attacker
+- name: Denylist attacker
   hosts: checkpoint
 
   vars:
@@ -207,14 +207,14 @@ VS Code オンラインエディタで `incident_blacklist.yml` というファ�
 Playbookを実行し、IP アドレスを効果的にブラックリストに登録します:
 
 ```bash
-[student<X>@ansible ~]$ ansible-navigator run incident_blacklist.yml
+[student<X>@ansible ~]$ ansible-navigator run incident_denylist.yml
 ```
 
 QRadar UI の、**Log Activity** タブで Snort からのアラートを受信していないことを確認してください。ファイアウォールを QRadar に接続した場合、実際にはそこからログが入ってくることに注意してください。
 
 また、Check Point に新しいルールが追加されたことを簡単に確認してみましょう。Windows ワークステーションにアクセスし、SmartConsole インターフェイスを開きます。左側の [**SECURITY POLICIES**] をクリックして、アクセス制御ポリシーのエントリが **Accept** から **Drop** に変更されていることに注意してください。
 
-![SmartConsole Blacklist Policy](images/check_point_policy_drop.png)
+![SmartConsole Denylist Policy](images/check_point_policy_drop.png)
 
 攻撃を特定し、攻撃の原因となるトラフィックをブロックすることに成功しました！
 
