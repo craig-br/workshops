@@ -145,13 +145,15 @@
     controller_host: "https://{{ username }}.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}"
     validate_certs: false
 
+# @todo Craig change repo name and branch after PR
 # Add repository as project
 - name: Add git repository as Tower project
   awx.awx.project:
     name: "Workshop Project"
     organization: "Default"
     scm_type: git
-    scm_url: "https://github.com/ansible-security/workshop-examples"
+    scm_url: "https://github.com/craig-bry/workshop-examples"
+    scm_branch: doc-wording
     controller_username: admin
     controller_password: "{{ admin_password }}"
     controller_host: "https://{{ username }}.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}"
