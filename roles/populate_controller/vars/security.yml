@@ -48,7 +48,7 @@ controller_groups:
   - name: windows
     inventory: "Workshop Inventory"
     hosts:
-      - "windows_ws" 
+      - "windows_ws"
     variables:
       note: in production these passwords would be encrypted in vault
       ansible_user: "Administrator"

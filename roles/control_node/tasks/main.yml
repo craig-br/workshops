@@ -1,12 +1,12 @@
 ---
-- name: aap setup for control node
+- name: aap setup for control node # TODO put back
   include_tasks: 10_aap_setup.yml
   tags:
     - aap_setup
 
 # Port 8443 used in containerized installs
-- name: check to see if automation controller is already up and running
-  uri:
+- name: Check to see if automation controller is already up and running
+  ansible.builtin.uri:
     url: https://localhost:8443/api/v2/ping/
     method: GET
     user: admin
@@ -20,17 +20,17 @@
     - controllerinstall is defined
     - controllerinstall|bool
 
-- name: install controller if knob is set
-  include_tasks: "12_controller.yml"
+- name: Install controller if knob is set
+  ansible.builtin.include_tasks: "12_controller.yml"
   when:
     - controllerinstall is defined
     - controllerinstall|bool
-    - check_controller.status != 200
+    # - check_controller.status != 200 # TODO put back
 
 - name: Install packages
-  include_tasks: 15_package_dependencies.yml
+  ansible.builtin.include_tasks: 15_package_dependencies.yml
 
-- name: common workshop setup for control node
-  include_tasks: 20_all_workshop.yml
+- name: Common workshop setup for control node
+  ansible.builtin.include_tasks: 20_all_workshop.yml
 
 

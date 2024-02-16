@@ -9,11 +9,13 @@
   ansible.builtin.copy:
     src: "{{ aap_archive | default(playbook_dir + '/aap.tar.gz') }}"
     dest: "{{ tempdir.path }}/aap.tar.gz"
+    mode: 0644
 
 - name: Create directory for automation controller
   ansible.builtin.file:
     path: "{{ aap_dir }}"
     state: directory
+    mode: 0755
 
 - name: Extract AAP tar.gz install
   ansible.builtin.unarchive:
@@ -34,11 +36,12 @@
   ansible.builtin.template:
     src: vimrc.j2
     dest: "/home/{{ username }}/.vimrc"
+    mode: 0644
     owner: "{{ username }}"
     group: "{{ username }}"
 
 - name: Install ansible-core
-  dnf:
+  ansible.builtin.package:
     name:
       - ansible-core
     state: present

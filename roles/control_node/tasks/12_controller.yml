@@ -1,14 +1,16 @@
 ---
-- name: template inventory file for Ansible Controller Install
-  template:
+- name: Template inventory file for Ansible Controller Install
+  ansible.builtin.template:
     src: "controller_install.j2"
     dest: "{{ aap_dir }}/inventory"
+    mode: 0644
   when: create_cluster is not defined or not create_cluster|bool
 
-- name: template inventory file for Automation Controller Install cluster
-  template:
+- name: Template inventory file for Automation Controller Install cluster
+  ansible.builtin.template:
     src: tower_cluster_install.j2
     dest: "{{ aap_dir }}/inventory"
+    mode: 0644
   when: create_cluster is defined and create_cluster|bool
 
 - name: Copy manifest.zip to {{ app_dir }}
@@ -17,28 +19,28 @@
     dest: "{{ aap_dir }}"
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '0644'
+    mode: 0644
 
-- name: Create {{ aap_dir }}/config directory
+- name: Create config directory in {{ aap_dir }}
   ansible.builtin.file:
     path: "{{ aap_dir }}/config"
     state: directory
-    mode: '0755'
+    mode: 0755
 
-- name: Copy users.yml to {{ aap_dir }}/config
+- name: Copy users.yml to config directory in {{ aap_dir }}
   ansible.builtin.copy:
     src: "users.yml"
     dest: "{{ aap_dir }}/config"
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '0644'
+    mode: 0644
 
-- name: run the Automation Controller installer
+- name: Run the Automation Controller installer
   become: true
   become_user: ec2-user
   environment:
     ANSIBLE_COLLECTIONS_PATH: "{{ aap_dir }}/collections"
-  shell: "{{ controller_install_command }}"
+  ansible.builtin.shell: "{{ controller_install_command }}"
   args:
     chdir: "{{ aap_dir }}"
   async: 1400
@@ -47,8 +49,8 @@
 # - name: run the Automation Controller installer
 #   ansible.builtin.import_playbook: ansible.containerized_installer.install
 
-- name: wait for Automation Controller to be up
-  uri:
+- name: Wait for Automation Controller to be up
+  ansible.builtin.uri:
     url: https://localhost:8443/api/v2/ping/
     method: GET
     user: admin
@@ -58,48 +60,50 @@
   until: check2.json is defined and check2.json.instances[0].capacity > 0 and check2.json.instance_groups[0].capacity > 0
   retries: 60
   delay: 10
-  # failed_when: false
 
 - name: Display /api/v2/ping results
-  debug:
+  ansible.builtin.debug:
     msg: '{{ check2.json }}'
 
-# - name: load license block
-#   block:
-#     - name: check for base64 variable first
-#       copy:
-#         dest: '{{ playbook_dir }}/manifest.zip'
-#         content: '{{ base64_manifest | b64decode }}'
-#       delegate_to: localhost
-#       become: false
-#       when: base64_manifest is defined
-#     - name: unable to load base64_manifest
-#       debug:
-#         msg: 'No base64_manifest variable found, trying to open manifest.zip'
-#       when: base64_manifest is undefined
-#     - name: Load manifest into variable
-#       local_action:
-#         module: slurp
-#         src: "{{ playbook_dir }}/manifest.zip"
-#       register: manifest_file
-#       become: false
+- name: Load license block
+  block:
+    - name: Check for base64 variable first
+      ansible.builtin.copy:
+        dest: '{{ playbook_dir }}/manifest.zip'
+        content: '{{ base64_manifest | b64decode }}'
+        mode: 0644
+      delegate_to: localhost
+      become: false
+      when: base64_manifest is defined
 
-# - name: Post manifest file
-#   uri:
-#     url: https://localhost/api/v2/config/
-#     method: POST
-#     user: admin
-#     password: "{{ admin_password }}"
-#     body: '{ "eula_accepted": true, "manifest": "{{ manifest_file.content }}" }'
-#     body_format: json
-#     validate_certs: false
-#     force_basic_auth: true
-#   register: license_controller
-#   until: license_controller is not failed
-#   retries: 5
+    - name: Unable to load base64_manifest
+      ansible.builtin.debug:
+        msg: 'No base64_manifest variable found, trying to open manifest.zip'
+      when: base64_manifest is undefined
+
+    - name: Load manifest into variable
+      delegate_to: localhost
+      become: false
+      ansible.builtin.slurp:
+        src: "{{ playbook_dir }}/manifest.zip"
+      register: manifest_file
+
+- name: Post manifest file
+  ansible.builtin.uri:
+    url: https://localhost:8443/api/v2/config/
+    method: POST
+    user: admin
+    password: "{{ admin_password }}"
+    body: '{ "eula_accepted": true, "manifest": "{{ manifest_file.content }}" }'
+    body_format: json
+    validate_certs: false
+    force_basic_auth: true
+  register: license_controller
+  until: license_controller is not failed
+  retries: 5
 
 ## Execution environments
-- name: create container registry credential
+- name: Create container registry credential
   awx.awx.credential:
     name: '{{ ee_registry_name }} credential'
     organization: Default
@@ -113,7 +117,7 @@
       password: "{{ redhat_password }}"
       host: "{{ ee_registry_name }}"
 
-- name: update default EE to use credential
+- name: Update default EE to use credential
   awx.awx.execution_environment:
     name: "Default execution environment"
     image: "{{ ee_default_image }}"

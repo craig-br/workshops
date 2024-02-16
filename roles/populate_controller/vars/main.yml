@@ -1,5 +1,5 @@
 controller_validate_certs: false
-controller_hostname: "https://{{ ansible_host }}"
+controller_hostname: "https://{{ ansible_host }}:8443"
 controller_username: "admin"
 controller_password: "{{ admin_password }}"
 controller_request_timeout: "200"
