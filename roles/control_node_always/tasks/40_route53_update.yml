@@ -8,7 +8,7 @@
   awx.awx.tower_token:
     controller_username: admin
     controller_password: "{{ admin_password }}"
-    controller_host: "https://localhost"
+    controller_host: "https://localhost:8443"
     validate_certs: false
     scope: "write"  # or "read" depending on your needs
   register: token_result

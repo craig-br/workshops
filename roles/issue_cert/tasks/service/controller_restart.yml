@@ -9,7 +9,7 @@
   become_user: "{{ run_commands_user }}"
   containers.podman.podman_container:
     name: automation-controller-web
-    state: restarted
+    state: started
   register: install_controller
   until: install_controller is not failed
   retries: 5

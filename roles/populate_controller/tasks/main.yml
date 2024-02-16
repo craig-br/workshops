@@ -1,13 +1,22 @@
 ---
-- name: load automation controller vars for specific workshop type
-  include_vars: "{{ item }}"
+- name: Set controller_login fact
+  ansible.builtin.set_fact:
+    controller_login: &controller_login
+      controller_username: admin
+      controller_password: "{{ admin_password }}"
+      controller_host: https://{{ ansible_host }}:8443
+      validate_certs: false
+  no_log: true
+
+- name: Load automation controller vars for specific workshop type
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - "{{role_path}}/vars/{{ workshop_type }}.yml"
     - "{{role_path}}/vars/unsupported_workshop.yml"
 
-- name: ensure controller is online and working
-  uri:
-    url: https://localhost/api/v2/ping/
+- name: Ensure controller is online and working
+  ansible.builtin.uri:
+    url: https://localhost:8443/api/v2/ping/
     method: GET
     user: admin
     password: "{{ admin_password }}"
@@ -23,49 +32,37 @@
   awx.awx.settings:
     name: AWX_COLLECTIONS_ENABLED
     value: false
-    controller_username: admin
-    controller_password: "{{ admin_password }}"
-    controller_host: "https://{{ ansible_host }}"
-    validate_certs: false
-    
+    <<: *controller_login
+
 #### CREDENTIAL
-- name: add SSH credential into Automation controller
+- name: Add SSH credential into Automation controller
   awx.awx.credential:
     name: "Workshop Credential"
     credential_type: Machine
     organization: "Default"
-    controller_username: admin
-    controller_password: "{{ admin_password }}"
-    controller_host: "https://{{ ansible_host }}"
-    validate_certs: false
+    <<: *controller_login
     inputs:
       username: ec2-user
       ssh_key_data: "{{ lookup('file', output_dir + '/' + ec2_name_prefix + '-private.pem') }}"
 
-- name: add controller credential into automation controller
+- name: Add controller credential into automation controller
   awx.awx.credential:
     name: "Controller Credential"
     credential_type: Red Hat Ansible Automation Platform
     organization: Default
-    controller_username: admin
-    controller_password: "{{ admin_password }}"
-    controller_host: "https://{{ ansible_host }}"
-    validate_certs: false
+    <<: *controller_login
     inputs:
-      host: "{{ student }}.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}"
+      host: "{{ student }}.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}:8443"
       username: admin
       password: "{{ admin_password }}"
 #### END OF CREDENTIAL
 
 #### Inventory
-- name: create workshop inventory
+- name: Create workshop inventory
   awx.awx.inventory:
     name: "Workshop Inventory"
     organization: "Default"
-    controller_username: admin
-    controller_password: "{{ admin_password }}"
-    controller_host: "https://{{ ansible_host }}"
-    validate_certs: false
+    <<: *controller_login
   register: workshop_inventory
   until: workshop_inventory is success
   delay: 3
@@ -88,17 +85,14 @@
 # #### end of inventory
 
 ### USER
-- name: add student user
+- name: Add student user
   awx.awx.user:
     username: "{{ student }}"
     password: "{{ admin_password }}"
     email: fake@fake.com
     state: present
     superuser: true
-    controller_username: admin
-    controller_password: "{{ admin_password }}"
-    controller_host: "https://{{ ansible_host }}"
-    validate_certs: false
+    <<: *controller_login
 
 # Workshop specific execution environments
 - name: Add specific workshop execution environment
@@ -106,13 +100,10 @@
     name: "{{ workshop_type }} workshop execution environment"
     image: "{{ lookup('vars', workshop_type + '_ee') }}"
     pull: missing
-    controller_username: admin
-    controller_password: "{{ admin_password }}"
-    controller_host: "https://{{ ansible_host }}"
-    validate_certs: false
+    <<: *controller_login
 
-- name: setup workshop specific controller information
-  include_tasks: "{{item}}"
+- name: Setup workshop specific controller information
+  ansible.builtin.include_tasks: "{{ item }}"
   with_first_found:
     - "{{ role_path }}/tasks/{{ workshop_type }}.yml"
     - "{{ role_path }}/tasks/unsupported_workshop.yml"

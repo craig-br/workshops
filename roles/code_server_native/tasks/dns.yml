@@ -7,6 +7,12 @@
     group: "{{ username }}"
     mode: '0755'
 
+- name: Ensure cert.pem exists and register output
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/live/{{ student }}.{{ ec2_name_prefix|lower }}.{{ workshop_dns_zone }}/cert.pem
+    checksum_algorithm: sha256
+  register: cert_pem
+
 - name: Copy cert.pem to student
   become: true
   become_user: root
@@ -16,6 +22,14 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     remote_src: true
+  when:
+    - cert_pem.stat.checksum is defined
+
+- name: Ensure privkey.pem exists and register output
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/live/{{ student }}.{{ ec2_name_prefix|lower }}.{{ workshop_dns_zone }}/privkey.pem
+    checksum_algorithm: sha256
+  register: privkey_pem
 
 - name: Copy privkey.pem to student
   become: true
@@ -26,3 +40,5 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     remote_src: true
+  when:
+    - privkey_pem.stat.checksum is defined

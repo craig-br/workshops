@@ -1,21 +1,31 @@
 ---
-- name: debug run_commands_user
-  debug:
+- name: Set controller_login fact
+  ansible.builtin.set_fact:
+    controller_login: &controller_login
+      controller_username: admin
+      controller_password: "{{ admin_password }}"
+      controller_host: https://{{ ansible_host }}:8443
+      validate_certs: false
+  no_log: true
+
+- name: Debug run_commands_user
+  ansible.builtin.debug:
     msg: "run_commands_user: {{ run_commands_user }}"
 
-- name: check normal user
-  debug: 
+- name: Check normal user
+  ansible.builtin.debug:
     msg: "{{ ansible_user_id }}"
 
-- name: run whoami command
+- name: Run whoami command
   become: true
   become_user: "{{ run_commands_user }}"
-  command: 
+  changed_when: false
+  ansible.builtin.command:
     cmd: "whoami"
   register: whoami
 
-- name: debug the whoami user
-  debug: 
+- name: Debug the whoami user
+  ansible.builtin.debug:
     msg: "{{ whoami }}"
 
 - name: Make sure Automation Controller is online before changing base URL
@@ -28,30 +38,24 @@
   until: controller_online is not failed
   retries: 5
 
-- name: set password
+- name: Set password
   block:
-    - name: change admin password R3dh4t1!
+    - name: Change admin password R3dh4t1!
       awx.awx.user:
         username: "admin"
         password: "{{ admin_password }}"
         state: present
         superuser: true
-        controller_username: admin
-        controller_password: "R3dh4t1!"
-        controller_host: "https://localhost"
-        validate_certs: false
+        <<: *controller_login
       register: set_password
       until: set_password is not failed
   rescue:
-    - name: change admin password
+    - name: Change admin password
       awx.awx.user:
         username: "admin"
         password: "{{ admin_password }}"
         state: present
         superuser: true
-        controller_username: admin
-        controller_password: "{{ admin_password }}"
-        controller_host: "https://localhost"
-        validate_certs: false
+        <<: *controller_login
       register: set_password
       until: set_password is not failed

@@ -14,7 +14,7 @@
     - &tower-pinger-block
       block:
         - name: check Tower status
-          shell: "curl --user 'admin:{{ admin_password }}' -vkL -XGET https://localhost/api/v2/ping/"
+          shell: "curl --user 'admin:{{ admin_password }}' -vkL -XGET https://localhost:8443/api/v2/ping/"
           register: check2
         - name: Display /api/v2/ping results (stdout)
           debug:
@@ -28,9 +28,9 @@
         - &tower-baseurl-task
           awx.awx.tower_settings:
             name: TOWER_URL_BASE
-            value: "https://{{ dns_name }}"
+            value: "https://{{ dns_name }}:8443"
             tower_verify_ssl: false
-            tower_host: https://localhost/
+            tower_host: https://localhost:8443/
             tower_username: admin
             tower_password: "{{ admin_password }}"
           register: change_base_url
@@ -40,7 +40,8 @@
           delay: 5
       rescue:
         - name: controller restart
-          include_tasks: "service/controller_restart.yml"
+          include_tasks: "service/controller_stop.yml"
+          include_tasks: "service/controller_start.yml"
 
         - *tower-pinger-block
 
